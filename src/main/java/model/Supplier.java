@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Supplier {
-	private int id;
+	private String id;
     private String type;
     private String libraryName;
 //    private String name;
@@ -35,10 +35,10 @@ public class Supplier {
 	public void setBooks(List<Book> books) {
 		this.books = books;
 	}
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getLibraryName() {
