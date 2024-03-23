@@ -10,7 +10,7 @@ public class Supplier {
 //    private String name;
     private double totalPrice;
     private List<Book> books;
-    
+
     public String getType() {
 		return type;
 	}

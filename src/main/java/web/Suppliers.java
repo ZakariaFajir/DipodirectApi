@@ -1,20 +1,19 @@
 package web;
 
+import java.io.IOException;
+
 import com.google.gson.Gson;
+
+import Dao.SupplierDao;
+import Dao.UserDaoImpl;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Order;
 import utils.ServletUtils;
 import utils.TokenUtils;
-import Dao.SupplierDao;
-import Dao.UserDaoImpl;
 
-import java.io.IOException;
-
-@WebServlet("/suppliers/*")
 public class Suppliers extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final int STATUS_SUCCESS = HttpServletResponse.SC_OK;
@@ -26,6 +25,7 @@ public class Suppliers extends HttpServlet {
 	private final SupplierDao supplierDao = new SupplierDao();
 	private final UserDaoImpl userDao = new UserDaoImpl();
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String[] pathParams = request.getPathInfo().split("/");
@@ -39,6 +39,7 @@ public class Suppliers extends HttpServlet {
 		}
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String[] pathParams = request.getPathInfo().split("/");

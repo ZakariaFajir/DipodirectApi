@@ -1,8 +1,14 @@
 package web;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.List;
+
 import com.google.gson.Gson;
+
+import Dao.UserDaoImpl;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,16 +18,10 @@ import utils.PasswordHash;
 import utils.ServletUtils;
 import utils.TokenUtils;
 
-import Dao.UserDaoImpl;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
-
-@WebServlet("/user/*")
 public class Users extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
@@ -40,6 +40,7 @@ public class Users extends HttpServlet {
 		}
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
@@ -61,45 +62,49 @@ public class Users extends HttpServlet {
 		}
 	}
 
-	private void getOrderHistory(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		try {
-			String authorizationHeader = request.getHeader("Authorization");
-			if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-				ServletUtils.sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
-						"Authorization token is missing or invalid");
-				return;
-			}
+private void getOrderHistory(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    try {
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            ServletUtils.sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    "Authorization token is missing or invalid");
+            return;
+        }
 
-			String token = authorizationHeader.substring(7); // Extract token from header
+        String token = authorizationHeader.substring(7); // Extract token from header
 
-			String email = TokenUtils.getEmailFromToken(token);
-			if (email == null) {
-				ServletUtils.sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
-						"Invalid token or expired token");
-				return;
-			}
+        String email = TokenUtils.getEmailFromToken(token);
+        if (email == null) {
+            ServletUtils.sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    "Invalid token or expired token");
+            return;
+        }
 
-			// Use UserDao to retrieve order history
-			UserDaoImpl userDao = new UserDaoImpl();
-			List<Order> orderHistory = userDao.getUserByEmail(email, false).getOrders();
-			System.out.print(orderHistory.get(0).getOrderDateFormatted());
-			System.out.print(orderHistory.get(0).getSupplierName());
+        // Use UserDao to retrieve order history
+        UserDaoImpl userDao = new UserDaoImpl();
+        User user = userDao.getUserByEmail(email, false);
+        List<Order> orderHistory = user != null ? user.getOrders() : Collections.emptyList();
 
-			// Convert order history to JSON and send response
-			Gson gson = new Gson();
-			String orderHistoryJson = gson.toJson(orderHistory);
-			System.out.println(orderHistoryJson);
+        if (orderHistory.isEmpty()) {
+            ServletUtils.sendResponse(response, HttpServletResponse.SC_NOT_FOUND,
+                    "No order history found for the user");
+            return;
+        }
 
-			response.setContentType("application/json");
-			response.getWriter().write(orderHistoryJson);
-		} catch (Exception e) {
-			// Log the exception
-			e.printStackTrace();
+        // Convert order history to JSON and send response
+        Gson gson = new Gson();
+        String orderHistoryJson = gson.toJson(orderHistory);
 
-			ServletUtils.sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					"Error occurred while processing the request");
-		}
-	}
+        response.setContentType("application/json");
+        response.getWriter().write(orderHistoryJson);
+    } catch (Exception e) {
+        // Log the exception
+        e.printStackTrace();
+
+        ServletUtils.sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "Error occurred while processing the request");
+    }
+}
 
 	private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {

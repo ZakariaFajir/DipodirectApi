@@ -2,13 +2,13 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://jakarta.ee/xml/ns/jakartaee" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd" version="5.0">
   <servlet>
     <description></description>
-    <display-name>Suppliers</display-name>
-    <servlet-name>Suppliers</servlet-name>
-    <servlet-class>web.Suppliers</servlet-class>
+    <display-name>Users</display-name>
+    <servlet-name>Users</servlet-name>
+    <servlet-class>web.Users</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>Suppliers</servlet-name>
-    <url-pattern>/Suppliers</url-pattern>
+    <servlet-name>Users</servlet-name>
+    <url-pattern>/users/*</url-pattern>
   </servlet-mapping>
   <display-name>DipoDirectApi</display-name>
   <welcome-file-list>
@@ -20,13 +20,11 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   <servlet>
-    <description></description>
-    <display-name>Auth</display-name>
-    <servlet-name>Auth</servlet-name>
-    <servlet-class>web.Auth</servlet-class>
+    <servlet-name>Suppliers</servlet-name>
+    <servlet-class>web.Suppliers</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>Auth</servlet-name>
-    <url-pattern>/Auth</url-pattern>
+    <servlet-name>Suppliers</servlet-name>
+    <url-pattern>/suppliers/*</url-pattern>
   </servlet-mapping>
 </web-app>

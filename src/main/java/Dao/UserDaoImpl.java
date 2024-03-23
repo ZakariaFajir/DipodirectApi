@@ -1,5 +1,11 @@
 package Dao;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.bson.Document;
+
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
@@ -7,12 +13,6 @@ import db.DBConnection;
 import model.Book;
 import model.Order;
 import model.User;
-
-import org.bson.Document;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class UserDaoImpl implements UserDao {
 	private MongoCollection<Document> userCollection;
@@ -95,11 +95,11 @@ public class UserDaoImpl implements UserDao {
 	    user.setEmail(document.getString("email"));
 	    user.setFirstname(document.getString("firstname"));
 	    user.setLastname(document.getString("lastname"));
-	    
+
 	    if (includePassword) {
 	        user.setPassword(document.getString("password"));
 	    }
-	    
+
 	    if (document.containsKey("orders") && document.get("orders") != null) {
 	        user.setOrders(documentToOrderList(document.getList("orders", Document.class)));
 	    }
