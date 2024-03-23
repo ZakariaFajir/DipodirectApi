@@ -32,7 +32,15 @@ This project is a Java API developed for accessing supplier items using MongoDB 
 - MongoDB Driver Sync
 
 ### Dockerizing the App
-1. Create a Dockerfile to build the Docker image:
+
+1. Ensure MongoDB is running, and set up the required environment variables:
+   - `DATABASE_URI`: MongoDB URI. Use local if MongoDB is running locally (`localhost:27017`) or MongoDB Atlas URI if using a cloud database. (Ensure network access is allowed)
+   - `DATABASE_NAME`: Name of the MongoDB collection.
+   - `SECRET_KEY`: Secret key used for generating tokens.
+   
+2. Run `mvn clean package` to generate the WAR file in the `target` directory.
+
+3. Create a Dockerfile to build the Docker image:
    ```Dockerfile
    # Use Tomcat & openjdk 17 image
    FROM tomcat:jdk17-openjdk
@@ -47,12 +55,12 @@ This project is a Java API developed for accessing supplier items using MongoDB 
    CMD ["catalina.sh", "run"]
    ```
 
-2. Build the Docker image:
+4. Build the Docker image:
    ```bash
    docker build -t dipodirectapi .
    ```
 
-3. Run the Docker container:
+5. Run the Docker container:
    ```bash
    docker run -p 8080:8080 dipodirectapi
    ```
@@ -85,7 +93,8 @@ To deploy this application on Render using Docker runtime:
 
 6. **Access the Application:**
    - Once deployed, Render will provide a URL where the application can be accessed.
-   ```
+   
+---
 
 ### Environment Variables
 - `DATABASE_URI`: MongoDB URI. Use local if MongoDB is running locally (`localhost:27017`) or MongoDB Atlas URI if using a cloud database. (Ensure network access is allowed)
