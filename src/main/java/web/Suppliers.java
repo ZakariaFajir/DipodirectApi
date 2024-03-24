@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.google.gson.Gson;
 
-import Dao.SupplierDao;
+import Dao.SupplierDaoImpl;
 import Dao.UserDaoImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -22,7 +22,7 @@ public class Suppliers extends HttpServlet {
 	private static final int STATUS_NOT_FOUND = HttpServletResponse.SC_NOT_FOUND;
 	private static final int STATUS_INTERNAL_ERROR = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 
-	private final SupplierDao supplierDao = new SupplierDao();
+	private final SupplierDaoImpl supplierDao = new SupplierDaoImpl();
 	private final UserDaoImpl userDao = new UserDaoImpl();
 
 	@Override
