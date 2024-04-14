@@ -5,10 +5,10 @@ public class Book {
     private int id;
     private String title;
     private String level;
-    private String language;
+    private String langue;
     private List<String> imgSrc;
     private String price;
-    private int maxQuantity;
+    private String maxQuantity;
 	public int getId() {
 		return id;
 	}
@@ -27,11 +27,11 @@ public class Book {
 	public void setLevel(String level) {
 		this.level = level;
 	}
-	public String getLanguage() {
-		return language;
+	public String getLangue() {
+		return langue;
 	}
-	public void setLanguage(String language) {
-		this.language = language;
+	public void setLangue(String langue) {
+		this.langue = langue;
 	}
 	public List<String> getImgSrc() {
 		return imgSrc;
@@ -45,10 +45,10 @@ public class Book {
 	public void setPrice(String price) {
 		this.price = price;
 	}
-	public int getMaxQuantity() {
+	public String getMaxQuantity() {
 		return maxQuantity;
 	}
-	public void setMaxQuantity(int maxQuantity) {
+	public void setMaxQuantity(String maxQuantity) {
 		this.maxQuantity = maxQuantity;
 	}
 

@@ -48,24 +48,48 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public void addOrder(String email, Order order) {
-		try {
-			// Check if the user exists
-			User user = getUserByEmail(email, false);
-			if (user == null) {
-				throw new IllegalArgumentException("User does not exist: " + email);
-			}
-			// Add the email and library name to the order
-			String fullname = user.getFirstname() + " " + user.getLastname();
-			order.setCustomerName(fullname);
+	    try {
+	        // Check if the user exists
+	        User user = getUserByEmail(email, false);
+	        if (user == null) {
+	            throw new IllegalArgumentException("User does not exist: " + email);
+	        }
 
-			Document filter = new Document("email", email);
-			Document update = new Document("$push", new Document("orders", orderToDocument(order)));
-			userCollection.updateOne(filter, update);
-		} catch (Exception e) {
-			// Handle the exception here
-			e.printStackTrace();
-		}
+	        // Check if all books exist for the given supplier
+	        boolean allBooksExist = checkAllBooksExist(order.getSupplierName(), order.getBooks());
+	        if (!allBooksExist) {
+	            System.out.println("Some books not found for the supplier: " + order.getSupplierName());
+	            return;
+	        }
+
+	        // Add the email and library name to the order
+	        String fullname = user.getFirstname() + " " + user.getLastname();
+	        order.setCustomerName(fullname);
+
+
+	        // Update the user's orders
+	        Document filter = new Document("email", email);
+	        Document update = new Document("$push", new Document("orders", orderToDocument(order)));
+	        userCollection.updateOne(filter, update);
+	    } catch (Exception e) {
+	        // Handle the exception here
+	        e.printStackTrace();
+	    }
 	}
+	
+	private boolean checkAllBooksExist(String supplierName, List<Book> books) {
+	    // Instanciation de la classe SupplierDaoImpl
+	    SupplierDaoImpl supplierDao = new SupplierDaoImpl();
+	    
+	    for (Book book : books) {
+	        // Utilisation de l'instance de SupplierDaoImpl pour appeler bookExistsForSupplier
+	        if (!supplierDao.bookExistsForSupplier(supplierName, book.getTitle())) {
+	            return false;
+	        }
+	    }
+	    return true;
+	}
+
 
 	private Document userToDocument(User user) {
 		return new Document("email", user.getEmail()).append("password", user.getPassword())
@@ -85,8 +109,8 @@ public class UserDaoImpl implements UserDao {
 
 	private Document bookToDocument(Book book) {
 		return new Document("id", book.getId()).append("title", book.getTitle()).append("level", book.getLevel())
-				.append("langue", book.getLanguage()).append("imgSrc", book.getImgSrc())
-				.append("price", book.getPrice()).append("maxQuantity", book.getMaxQuantity());
+				.append("langue", book.getLangue())
+				.append("price", book.getPrice());
 	}
 
 	private User documentToUser(Document document, boolean includePassword) {
@@ -132,14 +156,26 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	private Book documentToBook(Document document) {
-		Book book = new Book();
-		book.setId(document.getInteger("id"));
-		book.setTitle(document.getString("title"));
-		book.setLevel(document.getString("level"));
-		book.setLanguage(document.getString("langue"));
-		book.setImgSrc(document.getList("imgSrc", String.class));
-		book.setPrice(document.getString("price"));
-		book.setMaxQuantity(document.getInteger("maxQuantity"));
-		return book;
+	    Book book = new Book();
+	    book.setId(document.getInteger("id"));
+	    book.setTitle(document.getString("title"));
+	    book.setLevel(document.getString("level"));
+	    book.setLangue(document.getString("langue"));
+
+	    if (document.containsKey("imgSrc") && document.get("imgSrc") != null) {
+	        book.setImgSrc(document.getList("imgSrc", String.class));
+	    }
+
+	    // Check if "maxQuantity" exists in the document
+	    if (document.containsKey("maxQuantity")) {
+	        Object maxQuantityObject = document.get("maxQuantity");
+	        if (maxQuantityObject != null) {
+	            book.setMaxQuantity(maxQuantityObject.toString());
+	        }
+	    }
+
+	    book.setPrice(document.getString("price"));
+	    return book;
 	}
+
 }

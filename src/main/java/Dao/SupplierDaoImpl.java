@@ -5,8 +5,12 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
+
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+
 import db.DBConnection;
 import model.Book;
 import model.Supplier;
@@ -39,6 +43,18 @@ public class SupplierDaoImpl implements SupplierDao {
         Document supplierDocument = supplierCollection.find(query).first();
         return supplierDocument != null ? mapDocumentToSupplier(supplierDocument) : null;
     }
+     public boolean bookExistsForSupplier(String supplierName, String bookTitle) {
+        Bson supplierQuery = Filters.eq("library", supplierName);
+
+        Bson bookQuery = Filters.eq("books.title", bookTitle);
+
+        Bson finalQuery = Filters.and(supplierQuery, bookQuery);
+
+        Document supplierDocument = supplierCollection.find(finalQuery).first();
+
+        return supplierDocument != null;
+    }
+
 
 
     private Supplier mapDocumentToSupplier(Document supplierDocument) {
@@ -66,10 +82,13 @@ public class SupplierDaoImpl implements SupplierDao {
         book.setId(bookDocument.getInteger("id"));
         book.setTitle(bookDocument.getString("title"));
         book.setLevel(bookDocument.getString("level"));
-        book.setLanguage(bookDocument.getString("language"));
+        book.setLangue(bookDocument.getString("langue"));
         book.setImgSrc(bookDocument.getList("imgSrc", String.class));
         book.setPrice(bookDocument.getString("price"));
-        book.setMaxQuantity(bookDocument.getInteger("maxQuantity", 0)); // Default value if not present
+        Integer maxQuantity = bookDocument.getInteger("maxQuantity");
+        if (maxQuantity != null) {
+            book.setMaxQuantity(maxQuantity.toString());
+        }
         return book;
     }
 }
